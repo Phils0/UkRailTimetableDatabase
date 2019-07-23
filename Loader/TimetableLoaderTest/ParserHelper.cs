@@ -17,8 +17,8 @@ namespace TimetableLoaderTest
         private static readonly Factory _factory = 
             new Factory(Substitute.For<ILoaderConfig>(), Substitute.For<ILogger>());
 
-        private static readonly TtisParserFactory _ttisFactory = 
-            new TtisParserFactory(Substitute.For<ILogger>());
+        private static readonly StationParserFactory _ttisFactory = 
+            new StationParserFactory(Substitute.For<ILogger>());
         
         public static IRecord[] ParseRecords(string data)
         {

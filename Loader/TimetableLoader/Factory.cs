@@ -17,14 +17,14 @@ namespace TimetableLoader
         private readonly ILoaderConfig _config;
         private readonly ILogger _logger;
         private readonly IParserFactory _factory;
-        private readonly TtisParserFactory _ttisFactory;
+        private readonly StationParserFactory _ttisFactory;
 
         internal Factory(ILoaderConfig config, ILogger logger)
         {
             _config = config;
             _logger = logger;
             _factory = new ConsolidatorFactory(_logger);
-            _ttisFactory = new TtisParserFactory(_logger);
+            _ttisFactory = new StationParserFactory(_logger);
         }
 
         public IFileLoader CreateCifLoader()
@@ -42,7 +42,7 @@ namespace TimetableLoader
         public IFileLoader CreateStationLoader(IDatabase db)
         {
             var extractor = new RdgZipExtractor(_logger);
-            var parser = _ttisFactory.CreateStationParser();
+            var parser = _ttisFactory.CreateStationParser(6);
             var loader = db.CreateStationLoader();
 
             return new MasterStationFileLoader(extractor, parser, loader);
