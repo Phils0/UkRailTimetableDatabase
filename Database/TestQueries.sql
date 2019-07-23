@@ -1,4 +1,4 @@
-use Timetable;
+use TimetableRdg;
 
 select distinct l.id, l.tiploc, l.nlc, l.Stanox, l.ThreeLetterCode, l.Description
 from locations l

@@ -144,3 +144,23 @@ select s.*
 from Associations s
 where s.AssociatedUid IN ('Q53671', 'Q53672') or s.MainUid IN ('Q53671', 'Q53672')
 order by s.RunsFrom, s.StpIndicator desc;
+
+select s.RetailServiceId, s.TimetableUid, s.Id, l.TipLoc, l.Description, sl.*
+from schedules s
+inner join ScheduleLocations sl on s.Id = sl.ScheduleId
+inner join Locations l on l.Id = sl.LocationId
+where s.TimetableUid IN ('S61800', 'S61801') -- 'C22014', 'C26022'
+-- and s.id in (4554148, 4554518)
+order by sl.Id;
+
+select s.RetailServiceId, s.ReservationIndicator, s.*
+from schedules s
+where s.RetailServiceId IN ('VT103200', 'VT106800', 'GW860300', 'GW756100') -- , 'HX010000', 'AW121300'
+order by s.RetailServiceId, s.RunsFrom, s.StpIndicator desc, s.TimetableUid;
+
+select s.RetailServiceId, s.StpIndicator, s.RunsFrom, s.DayMask, s.ReservationIndicator, count(*)
+from schedules s
+where not s.ReservationIndicator = ''
+group by s.RetailServiceId, s.RunsFrom, s.DayMask, s.StpIndicator, s.ReservationIndicator
+having count(*) > 1
+order by s.RetailServiceId, s.RunsFrom, s.StpIndicator desc;
