@@ -1,11 +1,9 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using CifParser.Records;
 using Serilog;
 
-namespace TimetableLoader
+namespace TimetableLoader.SqlServer
 {
     internal abstract class RecordLoaderBase
     {

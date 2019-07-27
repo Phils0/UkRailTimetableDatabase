@@ -1,15 +1,9 @@
-﻿using CifParser.Records;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
+﻿using System.Data.SqlClient;
 using CifParser;
 using CifParser.RdgRecords;
 using Serilog;
 
-namespace TimetableLoader
+namespace TimetableLoader.SqlServer
 {   
     /// <summary>
     /// Bulk load Master Station A records

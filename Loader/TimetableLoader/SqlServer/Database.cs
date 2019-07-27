@@ -1,18 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 
-namespace TimetableLoader
+namespace TimetableLoader.SqlServer
 {
-    public interface IDatabase : IDisposable
-    {
-        void OpenConnection();
-        IDatabaseLoader CreateCifLoader();
-        IDatabaseLoader CreateStationLoader();
-    }
-
     internal class Database : IDatabase
     {
         private readonly string _connectionString;

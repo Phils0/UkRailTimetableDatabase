@@ -1,14 +1,11 @@
-﻿using CifParser.Records;
-using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Net.NetworkInformation;
 using CifParser;
+using CifParser.Records;
 using Serilog;
 
-namespace TimetableLoader
+namespace TimetableLoader.SqlServer
 {
     /// <summary>
     /// Bulk load Schedules

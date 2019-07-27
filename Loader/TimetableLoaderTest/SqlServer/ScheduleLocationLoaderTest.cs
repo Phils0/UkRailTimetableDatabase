@@ -1,16 +1,15 @@
-using CifParser.Records;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using CifParser;
+using CifParser.Records;
 using NSubstitute;
 using Serilog;
 using TimetableLoader;
+using TimetableLoader.SqlServer;
 using Xunit;
 
-namespace TimetableLoaderTest
+namespace TimetableLoaderTest.SqlServer
 {
     public class ScheduleLocationLoaderTest : IClassFixture<IntegrationFixture>
     {

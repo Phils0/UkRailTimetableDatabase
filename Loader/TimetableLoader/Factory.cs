@@ -36,7 +36,7 @@ namespace TimetableLoader
 
         public IParser CreateParser() => _factory.CreateParser();
         
-        public IDatabase GetDatabase() => new Database(_config.ConnectionString, _logger);
+        public IDatabase GetDatabase() => new SqlServer.Database(_config.ConnectionString, _logger);
 
         public IFileLoader CreateStationLoader(IArchive archive, IDatabase db)
         {

@@ -1,4 +1,3 @@
-using CifParser.Records;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,9 +7,10 @@ using CifParser;
 using NSubstitute;
 using Serilog;
 using TimetableLoader;
+using TimetableLoader.SqlServer;
 using Xunit;
 
-namespace TimetableLoaderTest
+namespace TimetableLoaderTest.SqlServer
 {
     public class ScheduleHeaderLoaderTest : IClassFixture<IntegrationFixture>
     {
