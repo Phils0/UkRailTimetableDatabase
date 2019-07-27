@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using CifParser;
 using CommandLine;
 
 namespace TimetableLoader
@@ -37,11 +38,16 @@ namespace TimetableLoader
             {
                 var loaderConfig = new LoaderConfig(config, opts);
                 Log.Information("Configure Loader: {config}", loaderConfig);
-                var factory = new Factory(loaderConfig, Log.Logger);
+                var logger = Log.Logger;
+                var factory = new Factory(
+                    loaderConfig, 
+                    new ConsolidatorFactory(logger),
+                    new StationParserFactory(logger),
+                    logger);
                 var loader = factory.CreateCifLoader();
               
                 Log.Information("Uncompress, Parse and Load timetable: {file}", opts.TimetableArchiveFile);
-                loader.Run(loaderConfig);
+                loader.Run();
                 Log.Information("{file} loaded", opts.TimetableArchiveFile);
             }
             catch (Exception e)

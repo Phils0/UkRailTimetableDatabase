@@ -14,8 +14,13 @@ namespace TimetableLoaderTest
 {
     internal static class ParserHelper
     {
+        private static readonly ILogger _logger = Substitute.For<ILogger>();
+        
         private static readonly Factory _factory = 
-            new Factory(Substitute.For<ILoaderConfig>(), Substitute.For<ILogger>());
+            new Factory(Substitute.For<ILoaderConfig>(), 
+                new ConsolidatorFactory(_logger),
+                _ttisFactory,
+                _logger);
 
         private static readonly StationParserFactory _ttisFactory = 
             new StationParserFactory(Substitute.For<ILogger>());
@@ -33,7 +38,7 @@ namespace TimetableLoaderTest
         {
             var input = new StringReader(data);
 
-            var parser = _ttisFactory.CreateStationParser(0);
+            var parser = _ttisFactory.CreateParser(0);
             var records = parser.Read(input).Cast<Station>().ToArray();
             return records;
         }

@@ -17,9 +17,9 @@ namespace TimetableLoader
             _loader = loader;
         }
         
-        public void Run(ILoaderConfig config)
+        public void Run()
         {
-            var reader =_extractor.ExtractFile(config.TimetableArchiveFile, RdgZipExtractor.StationExtension);
+            var reader = _extractor.ExtractFile(RdgZipExtractor.StationExtension);
             var records = _parser.Read(reader);
             _loader.Load(records);
         }

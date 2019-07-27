@@ -12,17 +12,6 @@ namespace TimetableLoaderTest
     {
         private const string TestArchive = "Dummy.zip";
         
-        private ILoaderConfig TestConfig
-        {
-            get
-            {
-                var config = Substitute.For<ILoaderConfig>();
-                config.TimetableArchiveFile.Returns(TestArchive);
-                config.IsRdgZip.Returns(true);
-                return config;
-            }
-        }
-        
         [Fact]
         public void LoadsMasterStationFile()
         {
@@ -32,9 +21,9 @@ namespace TimetableLoaderTest
                 Substitute.For<IParser>(),
                 Substitute.For<IDatabaseLoader>());
 
-            loader.Run(TestConfig);
+            loader.Run();
             
-            extractor.Received().ExtractFile(TestArchive, RdgZipExtractor.StationExtension);
+            extractor.Received().ExtractFile(RdgZipExtractor.StationExtension);
         }
     }
 }

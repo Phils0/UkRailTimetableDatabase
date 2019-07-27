@@ -9,54 +9,23 @@ namespace TimetableLoaderTest
 {
     public class CifLoaderTest
     {
-        private const string TestArchive = "Dummy.zip";
-
-        private ILoaderConfig TestConfig
-        {
-            get
-            {
-                var config = Substitute.For<ILoaderConfig>();
-                config.TimetableArchiveFile.Returns(TestArchive);
-                config.IsRdgZip.Returns(true);
-                return config;
-            }
-        }
-
         [Fact]
         public void LoadsCifFile()
         {
             var extractor = Substitute.For<IExtractor>();
+            var archive = Substitute.For<IArchive>();
+            archive.CreateExtractor().Returns(extractor);
+            
             var factory = CreateStubFactory();
-            factory.CreateExtractor().Returns(extractor);
+            factory.GetArchive().Returns(archive);
             
             var loader = new CifLoader(factory);
 
-            loader.Run(TestConfig);
+            loader.Run();
             
-            extractor.Received().ExtractCif(TestArchive);
+            extractor.Received().ExtractCif();
         }
-             
-        [Fact]
-        public void LoadsMasterStationFileWhenRdgZip()
-        {
-            var extractor = Substitute.For<IArchiveFileExtractor>();
-            var factory = CreateStubFactory();
-            factory.CreateStationLoader(Arg.Any<IDatabase>()).Returns(new MasterStationFileLoader(
-                extractor,
-                Substitute.For<IParser>(),
-                Substitute.For<IDatabaseLoader>()));
-            
-            var loader = new CifLoader(factory);
-
-            var config = Substitute.For<ILoaderConfig>();
-            config.TimetableArchiveFile.Returns(TestArchive);
-            config.IsRdgZip.Returns(false);
-
-            loader.Run(config);
-            
-            extractor.DidNotReceive().ExtractFile(Arg.Any<string>(), RdgZipExtractor.StationExtension);
-        }
-
+        
         private static IFactory CreateStubFactory()
         {
             var factory = Substitute.For<IFactory>();
@@ -65,26 +34,48 @@ namespace TimetableLoaderTest
             factory.CreateParser().Returns(parser);
             
             var db = Substitute.For<IDatabase>();
-            factory.CreateDatabase().Returns(db);
+            factory.GetDatabase().Returns(db);
             
             return factory;
         }
+        
+        [Fact]
+        public void LoadsMasterStationFileWhenRdgZip()
+        {
+            var stationsLoader = Substitute.For<IFileLoader>();
+            
+            var archive = Substitute.For<IArchive>();
+            archive.IsRdgZip.Returns(true);
 
+            var factory = CreateStubFactory();
+            factory.GetArchive().Returns(archive);
+            factory.CreateStationLoader(Arg.Any<IArchive>(),Arg.Any<IDatabase>()).Returns(stationsLoader);
+            
+            var loader = new CifLoader(factory);
+            
+            loader.Run();
+            
+            stationsLoader.Received().Run();
+        }
+        
         [Fact]
         public void DoesNotLoadMasterStationFileWhenNrodArchive()
         {
-            var extractor = Substitute.For<IArchiveFileExtractor>();
+            var stationsLoader = Substitute.For<IFileLoader>();
+            
+            var archive = Substitute.For<IArchive>();
+            archive.IsRdgZip.Returns(false);
+
             var factory = CreateStubFactory();
-            factory.CreateStationLoader(Arg.Any<IDatabase>()).Returns(new MasterStationFileLoader(
-                extractor,
-                Substitute.For<IParser>(),
-                Substitute.For<IDatabaseLoader>()));
+            factory.GetArchive().Returns(archive);
+            factory.CreateStationLoader(Arg.Any<IArchive>(),Arg.Any<IDatabase>()).Returns(stationsLoader);
             
             var loader = new CifLoader(factory);
-
-            loader.Run(TestConfig);
             
-            extractor.Received().ExtractFile(TestArchive, RdgZipExtractor.StationExtension);
+            loader.Run();
+            
+            stationsLoader.DidNotReceive().Run();
+
         }
     }
 }

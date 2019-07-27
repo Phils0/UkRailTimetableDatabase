@@ -1,4 +1,6 @@
+using CifExtractor;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace TimetableLoader
 {
@@ -14,8 +16,6 @@ namespace TimetableLoader
         }
 
         public string TimetableArchiveFile => _options.TimetableArchiveFile;
-
-        public bool IsRdgZip => _options.IsRdgZip;
 
         public string ConnectionString
         {
@@ -34,7 +34,7 @@ namespace TimetableLoader
 
         public override string ToString()
         {
-            return $"{TimetableArchiveFile}, {ConnectionString}, IsRdgZip: {IsRdgZip}";
+            return $"{TimetableArchiveFile}, {ConnectionString}";
         }
     }
 }

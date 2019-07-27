@@ -1,11 +1,12 @@
 using System.Data.SqlClient;
+using CifExtractor;
 using CifParser;
 
 namespace TimetableLoader
 {
     public interface IFileLoader
     {
-        void Run(ILoaderConfig config);
+        void Run();
     }
 
     internal class CifLoader : IFileLoader
@@ -17,23 +18,25 @@ namespace TimetableLoader
             _factory = factory;
         }
 
-        public void Run(ILoaderConfig config)
+        public void Run()
         {
-            using (var db = _factory.CreateDatabase())
+            using (var db = _factory.GetDatabase())
             {
                 db.OpenConnection();
-                LoadCif(config.TimetableArchiveFile, db);
-                if (config.IsRdgZip)
+
+                var archive = _factory.GetArchive();
+                LoadCif(archive, db);
+                if (archive.IsRdgZip)
                 {
-                    var stationLoader = _factory.CreateStationLoader(db);
-                    stationLoader.Run(config);
+                    var stationLoader = _factory.CreateStationLoader(archive, db);
+                    stationLoader.Run();
                 }
             }
         }
 
-        private void LoadCif(string file, IDatabase db)
+        private void LoadCif(IArchive archive, IDatabase db)
         {
-            var reader = _factory.CreateExtractor().ExtractCif(file);
+            var reader = archive.CreateExtractor().ExtractCif();
             var records = _factory.CreateParser().Read(reader);
             var loader = db.CreateCifLoader();
             loader.Load(records);

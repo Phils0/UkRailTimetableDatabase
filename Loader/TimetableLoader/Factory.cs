@@ -6,10 +6,10 @@ namespace TimetableLoader
 {
     public interface IFactory
     {
-        IExtractor CreateExtractor();
+        IArchive GetArchive();
         IParser CreateParser();
-        IDatabase CreateDatabase();
-        IFileLoader CreateStationLoader(IDatabase db);
+        IDatabase GetDatabase();
+        IFileLoader CreateStationLoader(IArchive archive, IDatabase db);
     }
 
     internal class Factory : IFactory
@@ -17,14 +17,14 @@ namespace TimetableLoader
         private readonly ILoaderConfig _config;
         private readonly ILogger _logger;
         private readonly IParserFactory _factory;
-        private readonly StationParserFactory _ttisFactory;
+        private readonly IParserFactory _rdgFactory;
 
-        internal Factory(ILoaderConfig config, ILogger logger)
+        internal Factory(ILoaderConfig config, IParserFactory cifParserFactory, IParserFactory stationParserFactory, ILogger logger)
         {
             _config = config;
             _logger = logger;
-            _factory = new ConsolidatorFactory(_logger);
-            _ttisFactory = new StationParserFactory(_logger);
+            _factory = cifParserFactory;
+            _rdgFactory = stationParserFactory;
         }
 
         public IFileLoader CreateCifLoader()
@@ -32,17 +32,19 @@ namespace TimetableLoader
             return new CifLoader(this);
         }
         
-        public IExtractor CreateExtractor() =>
-            _config.IsRdgZip ? (IExtractor) new RdgZipExtractor(_logger) : new NrodZipExtractor();
+        public IArchive GetArchive() => new Archive(_config.TimetableArchiveFile, _logger);
 
         public IParser CreateParser() => _factory.CreateParser();
         
-        public IDatabase CreateDatabase() => new Database(_config.ConnectionString, _logger);
+        public IDatabase GetDatabase() => new Database(_config.ConnectionString, _logger);
 
-        public IFileLoader CreateStationLoader(IDatabase db)
+        public IFileLoader CreateStationLoader(IArchive archive, IDatabase db)
         {
-            var extractor = new RdgZipExtractor(_logger);
-            var parser = _ttisFactory.CreateStationParser(6);
+            var extractor = new RdgZipExtractor(archive, _logger);
+            var ignoreLines = archive.IsDtdZip
+                ? StationParserFactory.DtdIgnoreLines
+                : StationParserFactory.TtisIgnoreLines;
+            var parser = _rdgFactory.CreateParser(ignoreLines);
             var loader = db.CreateStationLoader();
 
             return new MasterStationFileLoader(extractor, parser, loader);
