@@ -1,6 +1,5 @@
 param(
 [string] $cifFile,    # National Rail Open Data CIF file to
-[switch] $isRdgArchive,  # Is an RDG archive, false then assume its an NROD gz
 [string] $database = "Timetable" # Database to load into
 )
 
@@ -11,10 +10,8 @@ param(
 Write-Host "Create tables - $database";
 Invoke-Sqlcmd -Database $database -InputFile "..\Database\Scripts\CreateSchema.sql";
 
-Write-Host "Load $cifFile - $database  IsRdgZip: $isRdgArchive"
-$isRdgZipFlag = if ($isRdgArchive) {"-r"} else {""};
-
-Start-Process -FilePath 'dotnet' -Wait -ArgumentList ".\TimetableLoader\bin\Debug\netcoreapp2.2\TimetableLoader.dll -i $cifFile $isRdgZipFlag -d $database";
+Write-Host "Load $cifFile - $database"
+Start-Process -FilePath 'dotnet' -Wait -ArgumentList ".\TimetableLoader\bin\Debug\netcoreapp2.2\TimetableLoader.dll -i $cifFile -d $database";
 
 Write-Host "Add indices - $database";
 Invoke-Sqlcmd -Database $database -InputFile ..\Database\Scripts\CreateIndices.sql;
