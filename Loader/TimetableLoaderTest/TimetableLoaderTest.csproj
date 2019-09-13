@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CifParser\CifParser\CifParser.csproj" />
     <ProjectReference Include="..\TimetableLoader\TimetableLoader.csproj" />
   </ItemGroup>
 

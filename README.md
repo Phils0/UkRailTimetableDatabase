@@ -13,10 +13,6 @@ It assumes its connecting to an existing local database using integrated securit
 * `runLoadFullNrodFile.bat` shows how to call `runloader.ps1` for a Network Rail cif file.
 * `runLoadFullRdgFile.bat` shows how to call `runloader.ps1` for a RDG cif file.
 
-## Development Dependencies
-
-The solution `TimetableLoader.sln` contains 6 projects, the 2 in this repo plus those from the CifParser repo.  It assumes that the CifParser repo has been cloned as a sibling of the `UkRailTimetableDatabase` repo.  At some point I will look to change this to either reference Nuget packages or do it as a git submodule.
-
 ## Limitations
 
 Currently the loader has assumptions that it is reading in a full CIF in the format supplied by National Rail Open Data (NROD) or RDG.  In the RDG case it loads the CIF file plus the Master Station file.
