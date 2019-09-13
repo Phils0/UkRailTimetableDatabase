@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using CifParser;
+using CifParser.Archives;
 using CommandLine;
 
 namespace TimetableLoader
@@ -20,39 +21,47 @@ namespace TimetableLoader
             try
             {
                 var config = ConfigureApp();
-                
+
                 CommandLine.Parser.Default.ParseArguments<Options>(args)
-                    .WithParsed<Options>(opts => RunOptionsAndReturnExitCode(opts, config))
-                    .WithNotParsed<Options>((errs) => HandleParseError(errs));
+                    .WithParsed<Options>(opts => Run(opts, config))
+                    .WithNotParsed<Options>(HandleParseError);
             }
             finally
             {
-                Log.CloseAndFlush();                
+                Log.CloseAndFlush();
             }
-
         }
 
-        private static void RunOptionsAndReturnExitCode(Options opts, IConfiguration config)
+        private static void Run(Options opts, IConfiguration configuration)
         {
             try
             {
-                var loaderConfig = new LoaderConfig(config, opts);
-                Log.Information("Configure Loader: {config}", loaderConfig);
-                var logger = Log.Logger;
-                var factory = new Factory(loaderConfig, logger);
-                var loader = factory.CreateCifLoader();
-              
-                Log.Information("Uncompress, Parse and Load timetable: {file}", opts.TimetableArchiveFile);
-                loader.Run();
-                Log.Information("{file} loaded", opts.TimetableArchiveFile);
+                var loaderConfig = new LoaderConfig(configuration, opts);
+                Log.Information("Loader Configuration: {config}", loaderConfig);
+                Load(loaderConfig);
             }
             catch (Exception e)
             {
                 Log.Fatal(e, "Processing failed for {file}", opts.TimetableArchiveFile);
                 throw;
             }
-        }
 
+            void Load(LoaderConfig config)
+            {
+                var archive = new Archive(config.TimetableArchiveFile, Log.Logger);
+                
+                Log.Information("Loading timetable: {file}", config.TimetableArchiveFile);
+                using (var db = new SqlServer.Database(config.ConnectionString, Log.Logger))
+                {
+                    db.OpenConnection();
+                
+                    CifFile.Load(archive, db);
+                    MasterStationFile.Load(archive, db);
+                }
+                Log.Information("{file} loaded", config.TimetableArchiveFile);
+            }
+        }
+        
         private static IConfiguration ConfigureApp()
         {
             return new ConfigurationBuilder()

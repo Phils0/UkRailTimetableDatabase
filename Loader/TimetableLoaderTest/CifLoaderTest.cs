@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using CifParser;
 using CifParser.Archives;
@@ -12,66 +13,14 @@ namespace TimetableLoaderTest
         [Fact]
         public void LoadsCifFile()
         {
-            var parser = Substitute.For<ICifParser>();
             var archive = Substitute.For<IArchive>();
-            archive.CreateCifParser().Returns(parser);
-            
-            var factory = CreateStubFactory();
-            factory.GetArchive().Returns(archive);
-            
-            var loader = new CifLoader(factory);
-
-            loader.Run();
-            
-            parser.Received().Read();
-        }
-        
-        private static IFactory CreateStubFactory()
-        {
-            var factory = Substitute.For<IFactory>();
+            var loader = Substitute.For<IDatabaseLoader>();
             var db = Substitute.For<IDatabase>();
-            factory.GetDatabase().Returns(db);
+            db.CreateCifLoader().Returns(loader);
             
-            return factory;
-        }
-        
-        [Fact]
-        public void LoadsMasterStationFileWhenRdgZip()
-        {
-            var stationsLoader = Substitute.For<IFileLoader>();
+            CifFile.Load(archive, db);
             
-            var archive = Substitute.For<IArchive>();
-            archive.IsRdgZip.Returns(true);
-
-            var factory = CreateStubFactory();
-            factory.GetArchive().Returns(archive);
-            factory.CreateStationLoader(Arg.Any<IArchive>(),Arg.Any<IDatabase>()).Returns(stationsLoader);
-            
-            var loader = new CifLoader(factory);
-            
-            loader.Run();
-            
-            stationsLoader.Received().Run();
-        }
-        
-        [Fact]
-        public void DoesNotLoadMasterStationFileWhenNrodArchive()
-        {
-            var stationsLoader = Substitute.For<IFileLoader>();
-            
-            var archive = Substitute.For<IArchive>();
-            archive.IsRdgZip.Returns(false);
-
-            var factory = CreateStubFactory();
-            factory.GetArchive().Returns(archive);
-            factory.CreateStationLoader(Arg.Any<IArchive>(),Arg.Any<IDatabase>()).Returns(stationsLoader);
-            
-            var loader = new CifLoader(factory);
-            
-            loader.Run();
-            
-            stationsLoader.DidNotReceive().Run();
-
+            loader.Received().Load(Arg.Any<IEnumerable<IRecord>>());
         }
     }
 }

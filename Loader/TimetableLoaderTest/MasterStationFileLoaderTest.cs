@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using CifParser;
 using CifParser.Archives;
 using NSubstitute;
 using TimetableLoader;
@@ -7,17 +9,34 @@ namespace TimetableLoaderTest
 {
     public class MasterStationFileLoaderTest
     {
-        private const string TestArchive = "Dummy.zip";
+        [Fact]
+        public void LoadsMasterStationFileWhenRdgZip()
+        {
+            var loader = Substitute.For<IDatabaseLoader>();
+            var db = Substitute.For<IDatabase>();
+            db.CreateStationLoader().Returns(loader);
+            
+            var archive = Substitute.For<IArchive>();
+            archive.IsRdgZip.Returns(true);
+            
+            MasterStationFile.Load(archive, db);
+            
+            loader.Received().Load(Arg.Any<IEnumerable<IRecord>>());
+        }
         
         [Fact]
-        public void LoadsMasterStationFile()
+        public void DoesNotLoadMasterStationFileWhenNrodArchive()
         {
-            var parser = Substitute.For<IArchiveParser>();
-            var loader = new MasterStationFileLoader(parser, Substitute.For<IDatabaseLoader>());
-
-            loader.Run(); 
+            var loader = Substitute.For<IDatabaseLoader>();
+            var db = Substitute.For<IDatabase>();
+            db.CreateStationLoader().Returns(loader);
             
-            parser.Received().ReadFile(RdgZipExtractor.StationExtension);
+            var archive = Substitute.For<IArchive>();
+            archive.IsRdgZip.Returns(false);
+            
+            MasterStationFile.Load(archive, db);
+            
+            loader.DidNotReceive().Load(Arg.Any<IEnumerable<IRecord>>());
         }
     }
 }
