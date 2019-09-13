@@ -1,26 +1,21 @@
-using System.Data.SqlClient;
-using CifExtractor;
-using CifParser;
+using CifParser.Archives;
 
 namespace TimetableLoader
 {
     internal class MasterStationFileLoader : IFileLoader
     {
-        private IArchiveFileExtractor _extractor;
-        private IParser _parser;
+        private IArchiveParser _parser;
         private IDatabaseLoader _loader;
 
-        public MasterStationFileLoader(IArchiveFileExtractor extractor, IParser parser, IDatabaseLoader loader)
+        public MasterStationFileLoader(IArchiveParser parser, IDatabaseLoader loader)
         {
-            _extractor = extractor;
             _parser = parser;
             _loader = loader;
         }
         
         public void Run()
         {
-            var reader = _extractor.ExtractFile(RdgZipExtractor.StationExtension);
-            var records = _parser.Read(reader);
+            var records = _parser.ReadFile(RdgZipExtractor.StationExtension);
             _loader.Load(records);
         }
     }

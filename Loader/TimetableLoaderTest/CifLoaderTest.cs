@@ -1,6 +1,6 @@
 using System.Data.SqlClient;
-using CifExtractor;
 using CifParser;
+using CifParser.Archives;
 using NSubstitute;
 using TimetableLoader;
 using Xunit;
@@ -12,9 +12,9 @@ namespace TimetableLoaderTest
         [Fact]
         public void LoadsCifFile()
         {
-            var extractor = Substitute.For<IExtractor>();
+            var parser = Substitute.For<ICifParser>();
             var archive = Substitute.For<IArchive>();
-            archive.CreateExtractor().Returns(extractor);
+            archive.CreateCifParser().Returns(parser);
             
             var factory = CreateStubFactory();
             factory.GetArchive().Returns(archive);
@@ -23,16 +23,12 @@ namespace TimetableLoaderTest
 
             loader.Run();
             
-            extractor.Received().ExtractCif();
+            parser.Received().Read();
         }
         
         private static IFactory CreateStubFactory()
         {
             var factory = Substitute.For<IFactory>();
-
-            var parser = Substitute.For<IParser>();
-            factory.CreateParser().Returns(parser);
-            
             var db = Substitute.For<IDatabase>();
             factory.GetDatabase().Returns(db);
             

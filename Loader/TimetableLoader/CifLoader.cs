@@ -1,6 +1,6 @@
 using System.Data.SqlClient;
-using CifExtractor;
 using CifParser;
+using CifParser.Archives;
 
 namespace TimetableLoader
 {
@@ -36,8 +36,8 @@ namespace TimetableLoader
 
         private void LoadCif(IArchive archive, IDatabase db)
         {
-            var reader = archive.CreateExtractor().ExtractCif();
-            var records = _factory.CreateParser().Read(reader);
+            var parser = archive.CreateCifParser();
+            var records = parser.Read();
             var loader = db.CreateCifLoader();
             loader.Load(records);
         }

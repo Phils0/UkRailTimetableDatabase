@@ -1,4 +1,3 @@
-using CifExtractor;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 

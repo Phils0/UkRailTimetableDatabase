@@ -1,8 +1,5 @@
-using System;
-using CifExtractor;
-using CifParser;
+using CifParser.Archives;
 using NSubstitute;
-using NSubstitute.ReceivedExtensions;
 using TimetableLoader;
 using Xunit;
 
@@ -15,15 +12,12 @@ namespace TimetableLoaderTest
         [Fact]
         public void LoadsMasterStationFile()
         {
-            var extractor = Substitute.For<IArchiveFileExtractor>();
-            var loader = new MasterStationFileLoader(
-                extractor,
-                Substitute.For<IParser>(),
-                Substitute.For<IDatabaseLoader>());
+            var parser = Substitute.For<IArchiveParser>();
+            var loader = new MasterStationFileLoader(parser, Substitute.For<IDatabaseLoader>());
 
-            loader.Run();
+            loader.Run(); 
             
-            extractor.Received().ExtractFile(RdgZipExtractor.StationExtension);
+            parser.Received().ReadFile(RdgZipExtractor.StationExtension);
         }
     }
 }

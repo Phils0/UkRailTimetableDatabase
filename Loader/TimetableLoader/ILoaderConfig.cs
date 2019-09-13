@@ -1,5 +1,3 @@
-using CifExtractor;
-
 namespace TimetableLoader
 {
     public interface ILoaderConfig
