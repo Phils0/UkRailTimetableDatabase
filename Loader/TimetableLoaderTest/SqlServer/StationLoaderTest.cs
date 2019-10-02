@@ -8,6 +8,7 @@ using Xunit;
 
 namespace TimetableLoaderTest.SqlServer
 {
+    [Trait("Category", "SqlServer")]
     public class StationLoaderTest : IClassFixture<IntegrationFixture>
     {
         private const string Records =

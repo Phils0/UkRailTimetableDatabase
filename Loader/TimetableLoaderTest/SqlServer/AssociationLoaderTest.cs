@@ -9,6 +9,7 @@ using Xunit;
 
 namespace TimetableLoaderTest.SqlServer
 {
+    [Trait("Category", "SqlServer")]
     public class AssociationLoaderTest : IClassFixture<IntegrationFixture>
     {
         private const string Records =

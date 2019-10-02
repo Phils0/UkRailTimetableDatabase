@@ -1,6 +1,8 @@
 # UK Rail Timetable Database + loader
 A SQL Server database schema to load a UK timetable into plus a .Net Core app to load the data.  The loader reads a full CIF timetable file into the database
 
+[![Build Status](https://dev.azure.com/phils0oss/UkRailProjects/_apis/build/status/Phils0.UkRailTimetableDatabase?branchName=master)](https://dev.azure.com/phils0oss/UkRailProjects/_build/latest?definitionId=3&branchName=master)
+
 ## How do I load a CIF file?
 
 The `runLoader.ps1` script will create the schema (deleting any existing tables and data), load a timetable and then add some indices to the database.

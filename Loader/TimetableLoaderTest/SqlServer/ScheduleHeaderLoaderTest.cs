@@ -12,6 +12,7 @@ using Xunit;
 
 namespace TimetableLoaderTest.SqlServer
 {
+    [Trait("Category", "SqlServer")]
     public class ScheduleHeaderLoaderTest : IClassFixture<IntegrationFixture>
     {
         private const string Records =
