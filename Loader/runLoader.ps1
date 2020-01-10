@@ -11,7 +11,7 @@ Write-Host "Create tables - $database";
 Invoke-Sqlcmd -Database $database -InputFile "..\Database\Scripts\CreateSchema.sql";
 
 Write-Host "Load $cifFile - $database"
-Start-Process -FilePath 'dotnet' -Wait -ArgumentList ".\TimetableLoader\bin\Debug\netcoreapp2.2\TimetableLoader.dll -i $cifFile -d $database";
+Start-Process -FilePath 'dotnet' -Wait -ArgumentList ".\TimetableLoader\bin\Debug\netcoreapp3.1\TimetableLoader.dll -i $cifFile -d $database";
 
 Write-Host "Add indices - $database";
 Invoke-Sqlcmd -Database $database -InputFile ..\Database\Scripts\CreateIndices.sql;
