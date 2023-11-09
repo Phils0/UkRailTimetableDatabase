@@ -1,7 +1,7 @@
+# THIS PROJECT IS NO LONGER MAINTAINED
+
 # UK Rail Timetable Database + loader
 A SQL Server database schema to load a UK timetable into plus a .Net Core app to load the data.  The loader reads a full CIF timetable file into the database
-
-[![Build Status](https://dev.azure.com/phils0oss/UkRailProjects/_apis/build/status/Phils0.UkRailTimetableDatabase?branchName=master)](https://dev.azure.com/phils0oss/UkRailProjects/_build/latest?definitionId=3&branchName=master)
 
 ## How do I load a CIF file?
 
@@ -21,9 +21,6 @@ Currently the loader has assumptions that it is reading in a full CIF in the for
 
 There are assumptions built into the loader that imply loading daily deltas files is problematic (it generates Ids during load, would need to select out of the database).  I don't intend to implement this functionality given a full file is available everyday from NROD.
 
-
 ## Database Ids = cif file line number
 
 Due to the way database Ids are generated it created a quite nice unintended consequence that the Id is actually the line number of the record in the cif file.  There is no guarantee this will always be the case.
-
-
